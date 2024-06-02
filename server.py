@@ -111,25 +111,36 @@ def messageToInfo(number: str) :
         submitButtonEle.click()
 
     hospital = driver.find_element(By.XPATH, '//*[@id="vForm"]/fieldset/table/tbody/tr[1]/td[3]/a').text
+
     date = driver.find_element(By.XPATH, '//*[@id="vForm"]/fieldset/table/tbody/tr[1]/td[2]/a').text
+    # date_split = date_raw.split('-')
+    # date = f'DateTime({date_split[0]}, {date_split[1]}, {date_split[2]})'
+
+
     driver.find_element(By.XPATH, '//*[@id="vForm"]/fieldset/table/tbody/tr[1]/td[3]/a').click()
 
     WebDriverWait(driver, 30).until(
-            EC.visibility_of_element_located((By.XPATH, '//*[@id="vForm"]/div[2]/table[2]/tbody/tr[${i}]/td[2]/span[2]/a'))
+            EC.visibility_of_element_located((By.XPATH, f'//*[@id="vForm"]/div[2]/table[2]/tbody/tr[1]/td[2]/span[2]/a'))
         )
 
     i=1
     drugName = ''
     while True:
         try:
-            part = driver.find_element(By.XPATH, '//*[@id="vForm"]/div[2]/table[2]/tbody/tr[${i}]/td[2]/span[2]/a').text
+            part = driver.find_element(By.XPATH, f'//*[@id="vForm"]/div[2]/table[2]/tbody/tr[{i}]/td[2]/span[2]/a').text
         except:
             break
 
         drugName = drugName + '\n' + part
-        part+=1
+        i=i+1
 
-    data = {"hospital": hospital, "date": date, "drugName": drugName}
+    drugPeriod= driver.find_element(By.XPATH, '//*[@id="vForm"]/div[2]/table[2]/tbody/tr/td[9]/span[2]').text
+
+    data_list = {"hospital": hospital, "date": date, "drugName": drugName, "drugPeriod": drugPeriod}
+    print(data_list)
+
+    data = jsonify(data_list)
+    print(data)
 
     return data
 
